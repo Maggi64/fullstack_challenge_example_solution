@@ -1,0 +1,25 @@
+{
+  "name": "dev",
+  "dockerComposeFile": "../docker-compose.yaml",
+  "service": "dev",
+  "forwardPorts": [
+    5050,
+    8008
+  ],
+  "overrideCommand": true,
+  "postStartCommand": "./run_dev.sh",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "remote.downloadExtensionsLocally": true,
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "Vue.volar",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}
