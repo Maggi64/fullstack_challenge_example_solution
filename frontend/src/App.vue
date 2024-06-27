@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import Panel from 'primevue/panel';
-import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
-import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
-import { getData, postData } from './client.js';
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
+import InputText from "primevue/inputtext";
+import Panel from "primevue/panel";
+import { ref } from "vue";
 
-import type { Country, CountriesResponse } from '@/types/country';
-import type { Favorite } from '@/types/favorites';
+import { getData, postData } from "@/client.js";
+
+import type { Country, CountriesResponse } from "@/types/country";
+import type { Favorite } from "@/types/favorites";
+import type { DataTablePageEvent, DataTableSortEvent } from "primevue/datatable";
 
 const countries = ref<Country[]>([]);
 const favoriteCountries = ref<Favorite[]>([]);
@@ -22,11 +24,11 @@ async function fetchCountries() {
   const params = new URLSearchParams({
     page: page.value.toString(),
     sort_by: sortBy.value?.toString() ?? "name",
-    sort_order: sortOrder.value === 1 ? 'asc' : 'desc',
+    sort_order: sortOrder.value === 1 ? "asc" : "desc",
     search: search.value,
   });
   
-const response = await getData<CountriesResponse>("/countries", params);
+  const response = await getData<CountriesResponse>("/countries", params);
   countries.value = response.countries;
   totalRecords.value = response.total;
 }
@@ -66,7 +68,9 @@ fetchFavorites();
 <template>
   <header class="flex items-center p-6 border-b border-gray-300">
     <img alt="envelio logo" class="h-8 mr-6" src="@/assets/logo.svg" />
-    <h1 class="text-xl">envelio Coding Challenge</h1>
+    <h1 class="text-xl">
+      envelio Coding Challenge
+    </h1>
   </header>
 
   <main class="flex flex-col items-center flex-grow p-6 bg-gray-100">
@@ -74,14 +78,14 @@ fetchFavorites();
       <!-- Favorite Countries Table -->
       <Panel header="Favorite Countries" class="mb-8">
         <DataTable :value="favoriteCountries">
-          <Column field="name" header="Name"></Column>
-          <Column field="region" header="Region"></Column>
+          <Column field="name" header="Name" />
+          <Column field="region" header="Region" />
           <Column field="languages" header="Languages">
             <template #body="slotProps">
               {{ slotProps.data.languages.join(", ") }}
             </template>
           </Column>
-          <Column field="population" header="Population"></Column>
+          <Column field="population" header="Population" />
           <Column field="favorite" header="Favorite">
             <template #body="slotProps">
               <button @click="toggleFavorite(slotProps.data)">
@@ -94,16 +98,32 @@ fetchFavorites();
       
       <!-- Countries Overview Table -->
       <Panel header="Countries Overview">
-        <InputText v-model="search" placeholder="Search by name" @input="onFilter" class="w-full p-2 mb-4 border border-gray-400 rounded" />
-        <DataTable :value="countries" lazy paginator :first="first" :rows="20" :totalRecords="totalRecords" @page="onPage" @sort="onSort" :sortField="sortBy" :sortOrder="sortOrder">
-          <Column field="name" header="Name" sortable></Column>
-          <Column field="region" header="Region" sortable></Column>
+        <InputText
+          v-model="search"
+          placeholder="Search by name"
+          class="w-full p-2 mb-4 border border-gray-400 rounded"
+          @input="onFilter"
+        />
+        <DataTable
+          :value="countries"
+          lazy
+          paginator
+          :first="first"
+          :rows="20"
+          :total-records="totalRecords"
+          :sort-field="sortBy"
+          :sort-order="sortOrder"
+          @page="onPage"
+          @sort="onSort"
+        >
+          <Column field="name" header="Name" sortable />
+          <Column field="region" header="Region" sortable />
           <Column field="languages" header="Languages">
             <template #body="slotProps">
               {{ slotProps.data.languages.join(", ") }}
             </template>
           </Column>
-          <Column field="population" header="Population" sortable></Column>
+          <Column field="population" header="Population" sortable />
           <Column field="favorite" header="Favorite">
             <template #body="slotProps">
               <button @click="toggleFavorite(slotProps.data)">
