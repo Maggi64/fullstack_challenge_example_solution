@@ -5,6 +5,7 @@ import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'pri
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import { getData, postData } from './client.js';
+
 import type { Country, CountriesResponse } from '@/types/country';
 import type { Favorite } from '@/types/favorites';
 
@@ -58,10 +59,8 @@ function onFilter() {
   fetchCountries();
 }
 
-onMounted(() => {
-  fetchCountries();
-  fetchFavorites();
-});
+fetchCountries();
+fetchFavorites();
 </script>
 
 <template>
