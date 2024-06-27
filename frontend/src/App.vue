@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
 import Column from 'primevue/column';
+import InputText from 'primevue/inputtext';
 import { getData, postData } from './client.js';
 import type { Country, CountriesResponse } from '@/types/country';
 import type { Favorite } from '@/types/favorites';
@@ -17,7 +18,14 @@ const totalRecords = ref(0);
 const first = ref(0);
 
 async function fetchCountries() {
-  const response = await getData<CountriesResponse>(`/countries?page=${page.value}&sort_by=${sortBy.value}&sort_order=${sortOrder.value === 1 ? 'asc' : 'desc'}&search=${search.value}`);
+  const params = new URLSearchParams({
+    page: page.value.toString(),
+    sort_by: sortBy.value?.toString() ?? "name",
+    sort_order: sortOrder.value === 1 ? 'asc' : 'desc',
+    search: search.value,
+  });
+  
+const response = await getData<CountriesResponse>("/countries", params);
   countries.value = response.countries;
   totalRecords.value = response.total;
 }
@@ -33,7 +41,7 @@ async function toggleFavorite(country: Country) {
   fetchFavorites();
 }
 
-function onSort(event:DataTableSortEvent) {
+function onSort(event: DataTableSortEvent) {
   sortBy.value = event.sortField ?? "name";
   sortOrder.value = event.sortOrder ?? 0;
   fetchCountries();
@@ -80,7 +88,7 @@ onMounted(() => {
       
       <!-- Countries Overview Table -->
       <Panel header="Countries Overview">
-        <input v-model="search" placeholder="Search by name" @input="onFilter" class="w-full p-2 mb-4 border border-gray-400 rounded" />
+        <InputText v-model="search" placeholder="Search by name" @input="onFilter" class="w-full p-2 mb-4 border border-gray-400 rounded" />
         <DataTable :value="countries" lazy paginator :first="first" :rows="20" :totalRecords="totalRecords" @page="onPage" @sort="onSort" :sortField="sortBy" :sortOrder="sortOrder">
           <Column field="name" header="Name" sortable></Column>
           <Column field="region" header="Region" sortable></Column>
