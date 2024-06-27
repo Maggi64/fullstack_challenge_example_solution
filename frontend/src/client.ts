@@ -7,7 +7,7 @@ export async function getData<Response>(url: string): Promise<Response> {
   return response.json();
 }
 
-export async function postData<Response>(url: string, data: unknown): Promise<Response> {
+export async function postData<Response>(url: string, data: unknown): Promise<Response | undefined> {
   const response = await fetch(`${baseURL}${url}`, {
     method: 'POST',
     headers: {
@@ -15,5 +15,6 @@ export async function postData<Response>(url: string, data: unknown): Promise<Re
     },
     body: JSON.stringify(data),
   });
+  if (response.status === 204) return;
   return response.json();
 }

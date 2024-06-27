@@ -17,7 +17,7 @@ const totalRecords = ref(0);
 const first = ref(0);
 
 async function fetchCountries() {
-  const response = await getData<CountriesResponse>(`/countries?page=${page.value}&sort_by=${sortBy.value}&search=${search.value}`);
+  const response = await getData<CountriesResponse>(`/countries?page=${page.value}&sort_by=${sortBy.value}&sort_order=${sortOrder.value === 1 ? 'asc' : 'desc'}&search=${search.value}`);
   countries.value = response.countries;
   totalRecords.value = response.total;
 }
@@ -66,7 +66,7 @@ onMounted(() => {
     <div class="w-full max-w-5xl">
       <!-- Favorite Countries Table -->
       <Panel header="Favorite Countries" class="mb-8">
-        <DataTable :value="favoriteCountries" paginator :rows="10">
+        <DataTable :value="favoriteCountries">
           <Column field="name" header="Name"></Column>
           <Column field="region" header="Region"></Column>
           <Column field="languages" header="Languages">

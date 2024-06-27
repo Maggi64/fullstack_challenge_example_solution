@@ -1,10 +1,13 @@
 import os
-import psycopg
+from psycopg_pool import ConnectionPool
+from psycopg.rows import dict_row
 
-connection = psycopg.connect(
-    host=os.getenv("POSTGRES_HOST"),
-    port=os.getenv("POSTGRES_PORT"),
-    dbname=os.getenv("POSTGRES_DB"),
-    user=os.getenv("POSTGRES_USER"),
-    password=os.getenv("POSTGRES_PASSWORD"),
-)
+DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@" \
+               f"{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+
+pool = ConnectionPool(conninfo=DATABASE_URL, open=True)
+
+def get_connection():
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            yield cursor
