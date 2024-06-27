@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port $FRONTEND_PORT --host",
+    "test": "playwright test",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -15,12 +16,13 @@
     "vue": "^3.4.21"
   },
   "devDependencies": {
-    "tailwindcss": "3.4.4",
+    "@playwright/test": "^1.45.0",
     "@types/node": "^20.14.8",
     "@vitejs/plugin-vue": "^5.0.5",
     "npm-run-all2": "^6.2.0",
-    "typescript": "~5.5.2",
     "postcss": "8.4.38",
+    "tailwindcss": "3.4.4",
+    "typescript": "~5.5.2",
     "vite": "^5.3.1",
     "vue-tsc": "^2.0.22"
   }
