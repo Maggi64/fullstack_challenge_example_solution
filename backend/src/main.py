@@ -4,7 +4,6 @@ from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette import status
-from fastapi import Request
 
 from backend.src.models import CountryDetails, FavoriteUpdateRequest, PaginatedCountries
 from backend.src.db_connection import pool, get_connection
@@ -25,25 +24,25 @@ app.add_middleware(
 
 def fetch_languages(cursor, country_code):
     cursor.execute("""
-        SELECT l.name 
-        FROM languages l 
-        JOIN country_link_languages cl ON l.code = cl.language_code 
-        WHERE cl.country_code = %s
+        SELECT language.name 
+        FROM languages language
+        JOIN country_link_languages country_language ON language.code = country_language.language_code 
+        WHERE country_language.country_code = %s
     """, (country_code,))
     return [lang['name'] for lang in cursor.fetchall()]
 
 def construct_country_query(sort_by, sort_order, search):
     base_query = """
-        SELECT c.code, c.name, r.name AS region, c.population, 
-               COALESCE(f.country_code IS NOT NULL, FALSE) AS favorite 
-        FROM countries c 
-        JOIN regions r ON c.region_code = r.code 
-        LEFT JOIN favorites f ON c.code = f.country_code 
+        SELECT country.code, country.name, region.name AS region, country.population, 
+               COALESCE(favorite.country_code IS NOT NULL, FALSE) AS favorite 
+        FROM countries country 
+        JOIN regions region ON country.region_code = region.code 
+        LEFT JOIN favorites favorite ON country.code = favorite.country_code 
     """
     if search:
-        base_query += "WHERE c.name ILIKE %s "
+        base_query += "WHERE country.name ILIKE %s "
     
-    sort_column = f"c.{sort_by}" if sort_by in ["name", "population"] else f"r.{sort_by}"
+    sort_column = f"country.{sort_by}" if sort_by in ["name", "population"] else "region.name"
     base_query += f"ORDER BY {sort_column} {sort_order} LIMIT %s OFFSET %s"
     return base_query
 
