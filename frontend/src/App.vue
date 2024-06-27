@@ -83,6 +83,13 @@ onMounted(() => {
             </template>
           </Column>
           <Column field="population" header="Population"></Column>
+          <Column field="favorite" header="Favorite">
+            <template #body="slotProps">
+              <button @click="toggleFavorite(slotProps.data)">
+                {{ slotProps.data.favorite ? '★' : '☆' }}
+              </button>
+            </template>
+          </Column>
         </DataTable>
       </Panel>
       
